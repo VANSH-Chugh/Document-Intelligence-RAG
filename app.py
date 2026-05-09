@@ -281,7 +281,7 @@ if (
                     f"### Chunk {i+1}"
                 )
 
-                st.code(chunk)
+                st.markdown(chunk)
 
                 st.divider()
 

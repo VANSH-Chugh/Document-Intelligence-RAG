@@ -80,42 +80,52 @@ def extract_text_from_pdf(pdf_file):
 
 def chunk_text(
     text,
-    chunk_size=1500,
-    overlap=250
+    chunk_size=1000,
+    overlap=150
 ):
 
-    text = text.replace("\n", " ")
+    paragraphs = text.split("\n")
+
+    cleaned_paragraphs = []
+
+    for para in paragraphs:
+
+        para = para.strip()
+
+        if len(para) > 40:
+
+            cleaned_paragraphs.append(para)
 
     chunks = []
 
-    start = 0
+    current_chunk = ""
 
-    while start < len(text):
-
-        end = start + chunk_size
-
-        chunk = text[start:end]
-
-        # Try ending chunk at sentence boundary
-        last_period = chunk.rfind(".")
+    for para in cleaned_paragraphs:
 
         if (
-            last_period != -1
-            and end < len(text)
+            len(current_chunk) + len(para)
+            < chunk_size
         ):
 
-            chunk = chunk[:last_period + 1]
+            current_chunk += (
+                para + "\n"
+            )
 
-            end = start + last_period + 1
+        else:
+
+            chunks.append(
+                current_chunk.strip()
+            )
+
+            current_chunk = para + "\n"
+
+    if current_chunk:
 
         chunks.append(
-            chunk.strip()
+            current_chunk.strip()
         )
 
-        start = end - overlap
-
     return chunks
-
 
 # ======================
 # VECTOR STORE CREATION
